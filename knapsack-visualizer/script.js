@@ -311,8 +311,8 @@ btnReset.addEventListener('click', () => {
     document.getElementById('cmp-greedy-cost').textContent = "-- / --";
     document.getElementById('cmp-diff-cost').textContent = "--";
     
-    document.getElementById('cmp-dp-ratio').textContent = "100%";
-    document.getElementById('cmp-dp-ratio').className = "highlight-good";
+    document.getElementById('cmp-dp-ratio').textContent = "--";
+    document.getElementById('cmp-dp-ratio').className = "";
     document.getElementById('cmp-greedy-ratio').textContent = "--";
     document.getElementById('cmp-greedy-ratio').className = "";
     document.getElementById('cmp-diff-ratio').textContent = "--";
@@ -506,14 +506,22 @@ function updateComparison(dpRes, greedyRes) {
     }
     
     const cmpGreedyRatio = document.getElementById('cmp-greedy-ratio');
+    const cmpDpRatio = document.getElementById('cmp-dp-ratio');
+    
     if (dpRes && dpRes.profit > 0) {
         const ratio = (greedyRes.profit / dpRes.profit) * 100;
         cmpGreedyRatio.textContent = `${ratio.toFixed(2)}%`;
         if (ratio === 100) cmpGreedyRatio.className = 'highlight-good';
         else if (ratio > 90) cmpGreedyRatio.className = 'highlight-warning';
         else cmpGreedyRatio.className = 'highlight-bad';
+        
+        cmpDpRatio.textContent = "100.00%";
+        cmpDpRatio.className = "highlight-good";
     } else {
-        cmpGreedyRatio.textContent = dpRes ? "100%" : "N/A";
+        cmpGreedyRatio.textContent = dpRes ? "100.00%" : "N/A";
+        
+        cmpDpRatio.textContent = dpRes ? "100.00%" : "N/A";
+        cmpDpRatio.className = dpRes ? "highlight-good" : "";
     }
     
     if (dpRes) {

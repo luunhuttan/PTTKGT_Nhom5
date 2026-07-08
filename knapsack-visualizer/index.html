@@ -143,8 +143,8 @@
                         <thead>
                             <tr>
                                 <th>Tiêu chí</th>
-                                <th>Quy Hoạch Động</th>
-                                <th>Tham Lam</th>
+                                <th class="dp-col-header"><i class="fa-solid fa-chess-board"></i> Quy Hoạch Động</th>
+                                <th class="greedy-col-header"><i class="fa-solid fa-bolt"></i> Tham Lam</th>
                                 <th>Chênh lệch</th>
                             </tr>
                         </thead>
@@ -163,7 +163,7 @@
                             </tr>
                             <tr>
                                 <td>Tỷ lệ đạt mức tối ưu</td>
-                                <td id="cmp-dp-ratio" class="highlight-good">100%</td>
+                                <td id="cmp-dp-ratio">--</td>
                                 <td id="cmp-greedy-ratio">--</td>
                                 <td id="cmp-diff-ratio">--</td>
                             </tr>
@@ -175,9 +175,9 @@
                             </tr>
                             <tr>
                                 <td>Bộ nhớ sử dụng</td>
-                                <td>O(N * W) - Tốn nhiều</td>
-                                <td>O(N log N) - Rất ít</td>
-                                <td>-</td>
+                                <td><span class="badge badge-warning">O(N * W)</span> <span style="font-size: 0.85em; opacity: 0.8">Tốn nhiều</span></td>
+                                <td><span class="badge badge-success">O(N log N)</span> <span style="font-size: 0.85em; opacity: 0.8">Rất ít</span></td>
+                                <td style="color: var(--text-secondary)">--</td>
                             </tr>
                         </tbody>
                     </table>
