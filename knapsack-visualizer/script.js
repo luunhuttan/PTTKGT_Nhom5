@@ -510,17 +510,17 @@ function updateComparison(dpRes, greedyRes) {
     
     if (dpRes && dpRes.profit > 0) {
         const ratio = (greedyRes.profit / dpRes.profit) * 100;
-        cmpGreedyRatio.textContent = `${ratio.toFixed(2)}%`;
+        cmpGreedyRatio.textContent = `${parseFloat(ratio.toFixed(2))}%`;
         if (ratio === 100) cmpGreedyRatio.className = 'highlight-good';
         else if (ratio > 90) cmpGreedyRatio.className = 'highlight-warning';
         else cmpGreedyRatio.className = 'highlight-bad';
         
-        cmpDpRatio.textContent = "100.00%";
+        cmpDpRatio.textContent = "100%";
         cmpDpRatio.className = "highlight-good";
     } else {
-        cmpGreedyRatio.textContent = dpRes ? "100.00%" : "N/A";
+        cmpGreedyRatio.textContent = dpRes ? "100%" : "N/A";
         
-        cmpDpRatio.textContent = dpRes ? "100.00%" : "N/A";
+        cmpDpRatio.textContent = dpRes ? "100%" : "N/A";
         cmpDpRatio.className = dpRes ? "highlight-good" : "";
     }
     
