@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tối Ưu Hóa Quảng Cáo - Knapsack 0/1</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="glass-panel">
+            <h1><i class="fa-solid fa-users"></i> Nhóm 5</h1>
+            <p>Hệ thống Tối ưu hóa Lợi nhuận Quảng cáo sử dụng Knapsack 0/1</p>
+        </header>
+
+        <main class="grid-layout">
+            <!-- INPUT SECTION -->
+            <section class="glass-panel input-section">
+                <div class="section-header" style="flex-direction: column; align-items: flex-start; gap: 1rem;">
+                    <h2><i class="fa-solid fa-database"></i> Dữ Liệu Đầu Vào</h2>
+                    <div class="action-buttons" style="display: flex; flex-wrap: wrap; width: 100%; gap: 0.5rem;">
+                        <select id="preset-data-select" class="btn btn-outline" style="flex: 1; min-width: 150px; background-color: rgba(15, 23, 42, 0.6);">
+                            <option value="">-- Chọn file Test --</option>
+                        </select>
+                        <button id="btn-random" class="btn btn-outline" title="Tạo dữ liệu ngẫu nhiên"><i class="fa-solid fa-dice"></i></button>
+                        <label for="file-upload" class="btn btn-outline" title="Tải file từ máy tính">
+                            <i class="fa-solid fa-file-upload"></i>
+                        </label>
+                        <input type="file" id="file-upload" accept=".txt" style="display: none;">
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: -0.25rem;">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Định dạng file tải lên:</strong> Dòng 1 ghi <code>N W</code>, các dòng sau ghi <code>Cost Profit</code>.
+                    </p>
+                </div>
+
+                <div class="input-group">
+                    <label for="budget">Ngân sách tối đa (Budget):</label>
+                    <input type="number" id="budget" value="1000" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label>Danh sách Quảng cáo (Cost / Profit):</label>
+                    <div class="table-container">
+                        <table id="ads-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Chi phí (Cost)</th>
+                                    <th>Lợi nhuận (Profit)</th>
+                                    <th><button id="add-ad-row" class="btn-icon"><i class="fa-solid fa-plus"></i></button></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ads-body">
+                                <!-- JS will populate rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="total-ads-info">Tổng số quảng cáo: <span id="ads-count">0</span></div>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <button id="btn-run-all" class="btn btn-primary btn-large" style="margin-top: 0; flex: 2;">
+                        <i class="fa-solid fa-play"></i> Thực Thi
+                    </button>
+                    <button id="btn-reset" class="btn btn-danger-outline btn-large" style="margin-top: 0; flex: 1;">
+                        <i class="fa-solid fa-rotate-right"></i> Đặt Lại
+                    </button>
+                </div>
+            </section>
+
+            <!-- RESULTS SECTION -->
+            <section class="results-section">
+                <div class="algorithms-grid">
+                    <!-- DP RESULT -->
+                    <div class="glass-panel algo-card" id="dp-card">
+                        <div class="card-header dp-header">
+                            <h3><i class="fa-solid fa-chess-board"></i> Quy Hoạch Động</h3>
+                            <span class="status-badge dp-badge">Chính xác</span>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric">
+                                <span class="metric-label">Max Profit</span>
+                                <span class="metric-value" id="dp-profit">--</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Tổng Chi Phí</span>
+                                <span class="metric-value" id="dp-cost">-- / --</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Thời gian (ms)</span>
+                                <span class="metric-value" id="dp-time">--</span>
+                            </div>
+                        </div>
+                        <div class="selected-items">
+                            <h4>Quảng cáo được chọn (<span id="dp-selected-count">0</span>):</h4>
+                            <div class="chips-container" id="dp-selected-items">
+                                <span class="empty-state">Chưa có dữ liệu</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GREEDY RESULT -->
+                    <div class="glass-panel algo-card" id="greedy-card">
+                        <div class="card-header greedy-header">
+                            <h3><i class="fa-solid fa-bolt"></i> Tham Lam (Greedy)</h3>
+                            <span class="status-badge greedy-badge">Tốc độ</span>
+                        </div>
+                        <div class="metrics">
+                            <div class="metric">
+                                <span class="metric-label">Max Profit</span>
+                                <span class="metric-value" id="greedy-profit">--</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Tổng Chi Phí</span>
+                                <span class="metric-value" id="greedy-cost">-- / --</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Thời gian (ms)</span>
+                                <span class="metric-value" id="greedy-time">--</span>
+                            </div>
+                        </div>
+                        <div class="selected-items">
+                            <h4>Quảng cáo được chọn (<span id="greedy-selected-count">0</span>):</h4>
+                            <div class="chips-container" id="greedy-selected-items">
+                                <span class="empty-state">Chưa có dữ liệu</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPARISON -->
+                <div class="glass-panel comparison-panel mt-4">
+                    <h2><i class="fa-solid fa-scale-balanced"></i> Bảng So Sánh</h2>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Tiêu chí</th>
+                                <th>Quy Hoạch Động</th>
+                                <th>Tham Lam</th>
+                                <th>Chênh lệch</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Lợi nhuận thu được</td>
+                                <td id="cmp-dp-profit" class="highlight-good">--</td>
+                                <td id="cmp-greedy-profit">--</td>
+                                <td id="cmp-diff-profit">--</td>
+                            </tr>
+                            <tr>
+                                <td>Chi phí đã dùng / Ngân sách</td>
+                                <td id="cmp-dp-cost">-- / --</td>
+                                <td id="cmp-greedy-cost">-- / --</td>
+                                <td id="cmp-diff-cost">--</td>
+                            </tr>
+                            <tr>
+                                <td>Tỷ lệ đạt mức tối ưu</td>
+                                <td id="cmp-dp-ratio" class="highlight-good">100%</td>
+                                <td id="cmp-greedy-ratio">--</td>
+                                <td id="cmp-diff-ratio">--</td>
+                            </tr>
+                            <tr>
+                                <td>Thời gian chạy (ms)</td>
+                                <td id="cmp-dp-time">--</td>
+                                <td id="cmp-greedy-time" class="highlight-good">--</td>
+                                <td id="cmp-diff-time">--</td>
+                            </tr>
+                            <tr>
+                                <td>Bộ nhớ sử dụng</td>
+                                <td>O(N * W) - Tốn nhiều</td>
+                                <td>O(N log N) - Rất ít</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="conclusion" id="comparison-conclusion">
+                        Nhập dữ liệu và chạy thuật toán để xem đánh giá tổng quan.
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="test_data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

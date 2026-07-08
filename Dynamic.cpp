@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 #include <limits>
-
+#include <chrono>
 using namespace std;
 
 int knapsack(const vector<int>& cost, const vector<int>& profit, int n, int W,
@@ -63,7 +63,7 @@ int bruteForce(const vector<int>& cost, const vector<int>& profit, int n, int W)
 }
 
 int main() {
-    const long long SAFE_CELLS_LIMIT = 500000000LL; // limit (n+1)*(W+1)
+    const long long SAFE_CELLS_LIMIT = 40000000000LL; // limit (n+1)*(W+1)
     int n = 0, W = 0;
     cout << "=======================================================" << endl;
     cout << "  TOI UU HOA QUANG CAO TRUC TUYEN (KNAPSACK 0/1)" << endl;
@@ -116,7 +116,8 @@ int main() {
                 cin >> profit[i];
             }
         }
-    } else if (choice == 2) {
+    } 
+    else if (choice == 2) {
         string file_name;
         cout << "Nhap duong dan file (vd: test_data/test_n100_random.txt): ";
         cin >> file_name;
@@ -164,15 +165,20 @@ int main() {
     vector<vector<int>> dp(n+1, vector<int>(W+1, 0));
     vector<vector<char>> chosen(n+1, vector<char>(W+1, 0));
     selected.assign(n+1, 0);
+    
+    auto startDP = chrono::high_resolution_clock::now();
 
     int maxProfit = knapsack(cost, profit, n, W, dp, chosen);
     traceBack(cost, n, W, chosen, selected);
+
+    auto endDP = chrono::high_resolution_clock::now();
+    chrono::duration<double> durationDP = endDP - startDP;
 
     cout << "\n=======================================================" << endl;
     cout << "  KET QUA TOI UU" << endl;
     cout << "=======================================================" << endl;
     cout << "Loi nhuan toi da: " << maxProfit << endl << endl;
-
+    cout << "Thoi gian chay (DP + Traceback): "<< fixed << setprecision(4) << durationDP.count() << " s" << endl << endl;
     cout << "Cac quang cao duoc chon:" << endl;
     cout << left << setw(5) << "ID" << setw(15) << "Chi phi"
          << setw(15) << "Loi nhuan" << setw(15) << "Ty le ROI" << endl;
@@ -205,14 +211,21 @@ int main() {
 
     // Brute-force comparison for small n
     if (n <= 25) {
+        auto startBF = chrono::high_resolution_clock::now();
+
         int bf = bruteForce(cost, profit, n, W);
+
+        auto endBF = chrono::high_resolution_clock::now();
+        chrono::duration<double> durationBF = endBF - startBF;
         if (bf >= 0) {
             cout << "Brute-force best = " << bf << ", DP = " << maxProfit << "\n";
+            cout << "-> Thoi gian Brute-force: "<< fixed << setprecision(4) << durationBF.count() << " s\n";
             if (bf != maxProfit) cout << "[ERROR] DP khac brute-force!\n";
         }
     }
 
-    // Print DP sampling table (adaptive)
+/*
+    //Print DP sampling table (adaptive)
     cout << "\n--- Bang QHD (mau) ---" << endl;
     cout << "dp[i][w]: Loi nhuan toi da khi xet i quang cao voi ngan sach w" << endl << endl;
     int displayCols = 50;
@@ -246,6 +259,57 @@ int main() {
         }
         cout << endl;
     }
+*/
+    
+// --- append input log ---
+    {
+        ofstream inf("InputDP/inputDp.txt", ios::app);
+        if (inf.is_open()) {
+            time_t now = time(0);
+            char* dt = ctime(&now);
+            inf << "=======================================================" << endl;
+            inf << "Thoi gian nhap: " << dt;
+            inf << "So luong quang cao: " << n << endl;
+            inf << "Ngan sach toi da: " << W << endl;
+            inf << left << setw(6) << "ID" << setw(12) << "Chi phi" << setw(12) << "Loi nhuan" << endl;
+            inf << "-------------------------------------------------------" << endl;
+            for (int i = 1; i <= n; ++i)
+                inf << left << setw(6) << i << setw(12) << cost[i] << setw(12) << profit[i] << endl;
+            inf << "=======================================================" << endl << endl;
+            inf.close();
+            cout << "[Da luu du lieu nhap vao InputDP/inputDp.txt]" << endl;
+        } else {
+            cout << "[Warn] Khong mo duoc InputDP/inputDp.txt (kiem tra thu muc)" << endl;
+        }
+    }
 
-    return 0;
+    // --- append output log ---
+    {
+        ofstream outf("OutputDp/outputDp.txt", ios::app);
+        if (outf.is_open()) {
+            time_t now = time(0);
+            char* dt = ctime(&now);
+            outf << "=======================================================" << endl;
+            outf << "Thoi gian xu ly: " << dt;
+            outf << "Thoi gian chay thuat toan (DP): " << fixed << setprecision(4) << durationDP.count()<< " ms" << endl;
+            outf << "INPUT: n=" << n << ", W=" << W << endl;
+            outf << "Loi nhuan toi da: " << maxProfit << endl;
+            outf << left << setw(6) << "ID" << setw(12) << "Chi phi" << setw(12) << "Loi nhuan" << endl;
+            outf << "-------------------------------------------------------" << endl;
+            for (int i = 1; i <= n; ++i) {
+                if (selected[i]) {
+                    outf << left << setw(6) << i << setw(12) << cost[i] << setw(12) << profit[i] << endl;
+                }
+            }
+            outf << "-------------------------------------------------------" << endl;
+            outf << "Tong chi phi su dung: " << totalCost << " / " << W << endl;
+            outf << "Ngan sach con lai: " << (W - totalCost) << endl;
+            outf << "=======================================================" << endl << endl;
+            outf.close();
+            cout << "[Da luu ket qua vao OutputDp/outputDp.txt]" << endl;
+        } else {
+            cout << "[Warn] Khong mo duoc OutputDp/outputDp.txt (kiem tra thu muc)" << endl;
+        }
+        return 0;
+    }
 }

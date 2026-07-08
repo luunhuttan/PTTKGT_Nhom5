@@ -1,8 +1,8 @@
 KET QUA TOI UU QUANG CAO
 Mode: greedy
-Tong profit: 7407
-Tong cost: 995
+Tong profit: 4925
+Tong cost: 987
 Budget: 1000
-So luong quang cao duoc chon: 20/100
+So luong quang cao duoc chon: 15/50
 Thoi gian xu ly: 0 ms
-Danh sach ID duoc chon: 77 90 2 81 14 63 28 56 70 52 64 42 59 43 21 93 62 97 68 19 
+Danh sach ID duoc chon: 2 14 28 42 43 21 19 35 39 46 12 36 31 10 30 
